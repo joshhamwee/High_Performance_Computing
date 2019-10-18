@@ -1,11 +1,11 @@
-Running on host compute084.bc4.acrc.priv
-Time is Thu Oct 17 12:32:48 BST 2019
+Running on host compute085.bc4.acrc.priv
+Time is Thu Oct 17 12:52:43 BST 2019
 Directory is /mnt/storage/home/jh17602/High_Performance_Computing/intro-hpc-stencil-master
-Slurm job ID is 2551665
+Slurm job ID is 2553159
 
 This job runs on the following machines:
-compute084
+compute085
 
 ------------------------------------
- runtime: 0.196379 s
+ runtime: 0.101327 s
 ------------------------------------
