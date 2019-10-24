@@ -1,11 +1,11 @@
 Running on host compute084.bc4.acrc.priv
-Time is Thu Oct 24 11:46:56 BST 2019
+Time is Thu Oct 24 12:03:44 BST 2019
 Directory is /mnt/storage/home/jh17602/High_Performance_Computing/Serial_Optimisation
-Slurm job ID is 2603867
+Slurm job ID is 2604063
 
 This job runs on the following machines:
 compute084
 
 ------------------------------------
- runtime: 0.090643 s
+ runtime: 0.094048 s
 ------------------------------------
