@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   if (rank == 0) {
     start = 0;
   }else{
-    start = 512;
+    start = 513;
   }
 
   MPI_Datatype halo;
@@ -93,12 +93,12 @@ int main(int argc, char* argv[])
     stencil(start, local_nx, local_ny, local_width, local_height, image, tmp_image);
     if (rank == 0) {
       //Send start + local_nx - 1;
-      MPI_Send(&tmp_image[start+(local_nx-1)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
+      MPI_Send(&tmp_image[start+(local_nx)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
       //Receive start + local_nx;
       MPI_Recv(haloN, ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
 
       for (int y = 0; y < ny; y++) {
-        tmp_image[start + (local_nx)*ny + y] = haloN[y];
+        tmp_image[start + (local_nx+1)*ny + y] = haloN[y];
       }
 
     }else{
@@ -112,12 +112,12 @@ int main(int argc, char* argv[])
     stencil(start, local_nx, local_ny, local_width, local_height, tmp_image, image);
     if (rank == 0) {
       //Send start + local_nx - 1;
-      MPI_Send(&image[start+(local_nx-1)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
+      MPI_Send(&image[start+(local_nx)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
       //Receive start + local_nx;
       MPI_Recv(haloN, ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
 
       for (int y = 0; y < ny; y++) {
-        image[start + (local_nx)*ny + y] = haloN[y];
+        image[start + (local_nx+1)*ny + y] = haloN[y];
       }
 
     }else{
