@@ -27,7 +27,7 @@ int main(int argc, char* argv[])
   //MPI Startup
   MPI_Init(&argc, &argv);
   //Number processors, which processor ...
-  int nprocs, rank, flag, left, right, tag = 0,;
+  int nprocs, rank, flag, left, right, tag = 0;
   MPI_Status status;
 
   MPI_Initialized(&flag);
