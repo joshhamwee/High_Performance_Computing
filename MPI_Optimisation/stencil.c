@@ -53,8 +53,8 @@ int main(int argc, char* argv[])
   // we pad the outer edge of the image to avoid out of range address issues in
   // stencil
 
-  int width = nx;
-  int height = ny;
+  int width = nx + 2;
+  int height = ny + 2;
 
   // Allocate the image
   float* image = malloc(sizeof(float) * width * height);
