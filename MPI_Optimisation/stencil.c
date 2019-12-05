@@ -98,7 +98,7 @@ int main(int argc, char* argv[])
       MPI_Recv(haloN, ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
 
       for (int y = 0; y < ny; y++) {
-        tmp_image[start + (local_nx-1)*ny + y] = haloN[y];
+        tmp_image[start + (local_nx)*ny + y] = haloN[y];
       }
 
     }else{
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
       MPI_Recv(haloN, ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
 
       for (int y = 0; y < ny; y++) {
-        image[start + (local_nx-1)*ny + y] = haloN[y];
+        image[start + (local_nx)*ny + y] = haloN[y];
       }
 
     }else{
