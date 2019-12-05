@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
 
   printf("Hello from rank %d of %d\n", rank, nprocs);
 
-  left = (rank == MASTER) ? (rank + nprocs - 1) : (rank - 1);
+  left = (rank == 0) ? (rank + nprocs - 1) : (rank - 1);
   right = (rank + 1) % nprocs;
 
   printf("left is %d and right is %d\n", left, right);
