@@ -7,7 +7,7 @@
 #define OUTPUT_FILE "stencil.pgm"
 #define MASTER 0
 
-void stencil(const int start, const int nx, const int ny, const int width, const int height,
+void stencil(const int rank, const int nx, const int ny, const int width, const int height,
              float* image, float* tmp_image);
 void init_image(const int nx, const int ny, const int width, const int height,
                 float* image, float* tmp_image);
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
   double tic = wtime();
   for (int t = 0; t < niters; ++t) {
     //TODO figure out halo send and receives
-    stencil(start, local_nx, local_ny, local_width, local_height, image, tmp_image);
+    stencil(rank, local_nx, local_ny, local_width, local_height, image, tmp_image);
     if (rank == 0) {
       //Send start + local_nx - 1;
       MPI_Send(&tmp_image[start + (511)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
@@ -109,7 +109,7 @@ int main(int argc, char* argv[])
         tmp_image[512*local_ny + y] = haloN[y];
       }
     }
-    stencil(start, local_nx, local_ny, local_width, local_height, tmp_image, image);
+    stencil(rank, local_nx, local_ny, local_width, local_height, tmp_image, image);
     if (rank == 0) {
       //Send start + local_nx - 1;
       MPI_Send(&image[start + (511)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
@@ -159,11 +159,11 @@ int main(int argc, char* argv[])
   MPI_Finalize();
 }
 
-void stencil(const int start, const int nx, const int ny, const int width, const int height,
+void stencil(const int rank, const int nx, const int ny, const int width, const int height,
              float* image, float* tmp_image)
 {
   for (int j = 1; j < 1026; ++j) {
-    for (int i = 1; i < 1 + 512; ++i) {
+    for (int i = 1 + 512*rank; i < 1 + 512 + (513*rank); ++i) {
       tmp_image[j + i * height] =  image[j     + i       * height] * 0.6f;
       tmp_image[j + i * height] += (image[j     + (i - 1) * height] + image[j     + (i + 1) * height] + image[j - 1 + i       * height] + image[j + 1 + i       * height])* 0.1f;
     }
