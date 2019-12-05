@@ -14,6 +14,10 @@ void output_image(const char* file_name, const int nx, const int ny,
                   const int width, const int height, float* image);
 double wtime(void);
 
+// void halo(float* image, int rank);
+
+int calc_ncols_from_rank(int rank, int size);
+
 int main(int argc, char* argv[])
 {
   // Check usage
@@ -25,7 +29,7 @@ int main(int argc, char* argv[])
   //MPI Startup
   MPI_Init(&argc, &argv);
   //Number processors, which processor ...
-  int nprocs, rank, flag;
+  int nprocs, rank, flag, left, right;
 
   MPI_Initialized(&flag);
   if ( flag != 1 ){
@@ -37,6 +41,11 @@ int main(int argc, char* argv[])
 
   printf("Hello from rank %d of %d\n", rank, nprocs);
 
+  left = (rank == MASTER) ? (rank + nprocs - 1) : (rank - 1);
+  right = (rank + 1) % nprocs;
+
+  printf("left is %d and right is %d\n", left, right);
+
   // Initiliase problem dimensions from command line arguments
   int nx = atoi(argv[1]);
   int ny = atoi(argv[2]);
@@ -44,6 +53,7 @@ int main(int argc, char* argv[])
 
   // we pad the outer edge of the image to avoid out of range address issues in
   // stencil
+
   int width = nx + 2;
   int height = ny + 2;
 
@@ -57,7 +67,9 @@ int main(int argc, char* argv[])
   // Call the stencil kernel
   double tic = wtime();
   for (int t = 0; t < niters; ++t) {
+    //halo(image, rank);
     stencil(nx, ny, width, height, image, tmp_image);
+    //halo(tmp_image, rank);
     stencil(nx, ny, width, height, tmp_image, image);
   }
   double toc = wtime();
@@ -155,4 +167,17 @@ double wtime(void)
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return tv.tv_sec + tv.tv_usec * 1e-6;
+}
+
+int calc_ncols_from_rank(int rank, int size)
+{
+  int ncols;
+
+  ncols = NCOLS / size;       /* integer division */
+  if ((NCOLS % size) != 0) {  /* if there is a remainder */
+    if (rank == size - 1)
+      ncols += NCOLS % size;  /* add remainder to last rank */
+  }
+
+  return ncols;
 }
