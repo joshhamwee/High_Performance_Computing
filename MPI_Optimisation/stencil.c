@@ -100,7 +100,7 @@ int main(int argc, char* argv[])
       for (int y = 0; y < local_ny; y++) {
         tmp_image[start + (512)*local_ny + y] = haloN[y];
       }
-
+    }
     }else{
       MPI_Recv(haloN, ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
       //Send start + 1;
