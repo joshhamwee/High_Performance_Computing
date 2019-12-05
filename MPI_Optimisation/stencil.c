@@ -148,8 +148,10 @@ int main(int argc, char* argv[])
   printf("------------------------------------\n");
   printf(" runtime: %lf s\n", toc - tic);
   printf("------------------------------------\n");
+  if(rank == MASTER){
+    output_image(OUTPUT_FILE, nx, ny, width, height, image);
+  }
 
-  output_image(OUTPUT_FILE, nx, ny, width, height, image);
   free(image);
   free(tmp_image);
 
