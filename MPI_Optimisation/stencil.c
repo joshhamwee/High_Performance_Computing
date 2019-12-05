@@ -102,7 +102,7 @@ int main(int argc, char* argv[])
       }
     }
     else{
-      MPI_Recv(haloN, ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(haloN, local_ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
       //Send start + 1;
       MPI_Send(&tmp_image[start], 1, halo, left, tag, MPI_COMM_WORLD);
       for (int y = 0; y < local_ny; y++) {
@@ -121,7 +121,7 @@ int main(int argc, char* argv[])
       }
 
     }else{
-      MPI_Recv(haloN, ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(haloN, local_ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
       //Send start + 1;
       MPI_Send(&image[start], 1, halo, left, tag, MPI_COMM_WORLD);
       for (int y = 0; y < local_ny; y++) {
