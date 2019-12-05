@@ -35,7 +35,7 @@ int main(int argc, char* argv[])
   MPI_Comm_rank( MPI_COMM_WORLD, &rank );
   MPI_Comm_size( MPI_COMM_WORLD, &nprocs );
 
-  //printf(“Hello from rank %d of %d\n”, rank, nprocs);
+  printf("Hello from rank %d of %d\n", rank, nprocs);
 
   // Initiliase problem dimensions from command line arguments
   int nx = atoi(argv[1]);
