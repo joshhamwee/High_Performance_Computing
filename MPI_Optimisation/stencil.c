@@ -64,8 +64,8 @@ int main(int argc, char* argv[])
   // Set the input image
   init_image(nx, ny, width, height, image, tmp_image);
 
-  int local_nx = (nx / nprocs) + 1; // 513
-  int local_ny = ny + 2; //doesnt matter
+  int local_nx = 513; // 513
+  int local_ny = ny + 2;
 
   int local_width = (width / 2);
   int local_height = height;
@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
   MPI_Datatype halo;
   float* haloN = malloc(ny*sizeof(float));
 
-  MPI_Type_vector(ny, 1, 1, MPI_FLOAT, &halo);
+  MPI_Type_vector(local_ny, 1, 1, MPI_FLOAT, &halo);
   MPI_Type_commit(&halo);
 
   // syncronise processes
@@ -93,39 +93,39 @@ int main(int argc, char* argv[])
     stencil(start, local_nx, local_ny, local_width, local_height, image, tmp_image);
     if (rank == 0) {
       //Send start + local_nx - 1;
-      MPI_Send(&tmp_image[start+(511)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
+      MPI_Send(&tmp_image[512+(1)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
       //Receive start + local_nx;
-      MPI_Recv(haloN, ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(haloN, local_ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
 
-      for (int y = 0; y < ny; y++) {
-        tmp_image[(513)*ny + y] = haloN[y];
+      for (int y = 0; y < local_ny; y++) {
+        tmp_image[(513)*local_ny + y] = haloN[y];
       }
 
     }else{
       MPI_Recv(haloN, ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
       //Send start + 1;
-      MPI_Send(&tmp_image[start+(1)*ny], 1, halo, left, tag, MPI_COMM_WORLD);
-      for (int y = 0; y < ny; y++) {
-        tmp_image[start - 1 + y] = haloN[y];
+      MPI_Send(&tmp_image[(513)*local_ny+local_ny], 1, halo, left, tag, MPI_COMM_WORLD);
+      for (int y = 0; y < local_ny; y++) {
+        tmp_image[512*local_ny + y] = haloN[y];
       }
     }
     stencil(start, local_nx, local_ny, local_width, local_height, tmp_image, image);
     if (rank == 0) {
       //Send start + local_nx - 1;
-      MPI_Send(&image[start+(511)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
+      MPI_Send(&image[512+(1)*local_ny], 1, halo, right, tag, MPI_COMM_WORLD);
       //Receive start + local_nx;
-      MPI_Recv(haloN, ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
+      MPI_Recv(haloN, local_ny, MPI_FLOAT, right, tag, MPI_COMM_WORLD, &status);
 
-      for (int y = 0; y < ny; y++) {
-        image[(513)*ny + y] = haloN[y];
+      for (int y = 0; y < local_ny; y++) {
+        image[(513)*local_ny + y] = haloN[y];
       }
 
     }else{
       MPI_Recv(haloN, ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
       //Send start + 1;
-      MPI_Send(&image[start+(1)*ny], 1, halo, left, tag, MPI_COMM_WORLD);
-      for (int y = 0; y < ny; y++) {
-        image[start - 1 + y] = haloN[y];
+      MPI_Send(&image[(513)*local_ny+local_ny], 1, halo, left, tag, MPI_COMM_WORLD);
+      for (int y = 0; y < local_ny; y++) {
+        image[512*local_ny + y] = haloN[y];
       }
     }
   }
