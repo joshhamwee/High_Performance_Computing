@@ -7,7 +7,7 @@
 #define OUTPUT_FILE "stencil.pgm"
 #define MASTER 0
 
-void stencil(const int rank, const int nx, const int ny, const int width, const int height,
+void stencil(int rank, const int nx, const int ny, const int width, const int height,
              float* image, float* tmp_image);
 void init_image(const int nx, const int ny, const int width, const int height,
                 float* image, float* tmp_image);
@@ -159,11 +159,11 @@ int main(int argc, char* argv[])
   MPI_Finalize();
 }
 
-void stencil(const int rank, const int nx, const int ny, const int width, const int height,
+void stencil(int rank, const int nx, const int ny, const int width, const int height,
              float* image, float* tmp_image)
 {
-  for (int j = 1; j < 1026; ++j) {
-    for (int i = 1 + 512*rank; i < 1 + 512 + (513*rank); ++i) {
+  for (int j = 1; j < 1025; ++j) {
+    for (int i = 1 + 512*rank; i < 513 + (512*rank); ++i) {
       tmp_image[j + i * height] =  image[j     + i       * height] * 0.6f;
       tmp_image[j + i * height] += (image[j     + (i - 1) * height] + image[j     + (i + 1) * height] + image[j - 1 + i       * height] + image[j + 1 + i       * height])* 0.1f;
     }
