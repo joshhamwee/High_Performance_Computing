@@ -133,16 +133,16 @@ int main(int argc, char* argv[])
   float senderbuffer[(local_nx*local_ny)];
 
   if(rank == MASTER){
-    MPI_Recv(senderbuffer, 513*1026, MPI_FLOAT, 1, tag, MPI_COMM_WORLD, &status);
-    for (int i = 0; i < (513*1026); i++) {
+    MPI_Recv(senderbuffer, 512*1026, MPI_FLOAT, 1, tag, MPI_COMM_WORLD, &status);
+    for (int i = 0; i < (512*1026); i++) {
       image[513*local_ny + i] = senderbuffer[i];
     }
   }
   else{
-    for (int i = 0; i < (513*1026); i++) {
-      senderbuffer[i] = image[513*1026 + i];
+    for (int i = 0; i < (512*1026); i++) {
+      senderbuffer[i] = image[512*1026 + i];
     }
-    MPI_Send(senderbuffer, 513*1026, MPI_FLOAT, MASTER, tag, MPI_COMM_WORLD);
+    MPI_Send(senderbuffer, 512*1026, MPI_FLOAT, MASTER, tag, MPI_COMM_WORLD);
   }
 
   // Output
