@@ -135,7 +135,7 @@ int main(int argc, char* argv[])
   if(rank == MASTER){
     MPI_Recv(senderbuffer, 513*1026, MPI_FLOAT, 1, tag, MPI_COMM_WORLD, &status);
     for (int i = 0; i < (513*1026); i++) {
-      image[512*local_ny + i] = senderbuffer[i];
+      image[513*local_ny + i] = senderbuffer[i];
     }
   }
   else{
