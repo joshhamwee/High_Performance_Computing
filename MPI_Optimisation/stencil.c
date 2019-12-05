@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
+#include <mpi.h>
 
 // Define output file name
 #define OUTPUT_FILE "stencil.pgm"
@@ -20,6 +21,19 @@ int main(int argc, char* argv[])
     fprintf(stderr, "Usage: %s nx ny niters\n", argv[0]);
     exit(EXIT_FAILURE);
   }
+
+  //MPI Startup
+  MPI_Init(&argc, &argv);
+  //Number processors, which processor ...
+  int nprocs, rank, flag;
+
+  MPI_Initialized(&flag);
+  if ( flag != 1 ){
+    MPI_Abort(MPI_COMM_WORLD,EXIT_FAILURE);
+  }
+
+  MPI_Comm_rank( MPI_COMM_WORLD, &rank );
+  MPI_Comm_size( MPI_COMM_WORLD, &nprocs );
 
   // Initiliase problem dimensions from command line arguments
   int nx = atoi(argv[1]);
@@ -54,6 +68,8 @@ int main(int argc, char* argv[])
   output_image(OUTPUT_FILE, nx, ny, width, height, image);
   free(image);
   free(tmp_image);
+
+  MPI_Finalize();
 }
 
 void stencil(const int nx, const int ny, const int width, const int height,
@@ -61,11 +77,9 @@ void stencil(const int nx, const int ny, const int width, const int height,
 {
   for (int j = 1; j < ny + 1; ++j) {
     for (int i = 1; i < nx + 1; ++i) {
-      tmp_image[j + i * height] =  image[j     + i       * height] * 0.6f;
-      tmp_image[j + i * height] += (image[j     + (i - 1) * height] + image[j     + (i + 1) * height] + image[j - 1 + i       * height] + image[j + 1 + i       * height])* 0.1f;
-      // tmp_image[j + i * height] += image[j     + (i + 1) * height] * 0.1f;
-      // tmp_image[j + i * height] += image[j - 1 + i       * height] * 0.1f;
-      // tmp_image[j + i * height] += image[j + 1 + i       * height] * 0.1f;
+      tmp_image[j + i * height] += image[j     + (i + 1) * height] * 0.1f;
+      tmp_image[j + i * height] += image[j - 1 + i       * height] * 0.1f;
+      tmp_image[j + i * height] += image[j + 1 + i       * height] * 0.1f;
     }
   }
 }
