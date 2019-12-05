@@ -101,7 +101,7 @@ int main(int argc, char* argv[])
         tmp_image[start + (512)*local_ny + y] = haloN[y];
       }
     }
-    }else{
+    else{
       MPI_Recv(haloN, ny, MPI_FLOAT, left, tag, MPI_COMM_WORLD, &status);
       //Send start + 1;
       MPI_Send(&tmp_image[start], 1, halo, left, tag, MPI_COMM_WORLD);
@@ -128,6 +128,7 @@ int main(int argc, char* argv[])
         image[512*local_ny + y] = haloN[y];
       }
   }
+}
   double toc = wtime();
   float senderbuffer[(local_nx*local_ny)];
 
