@@ -134,12 +134,12 @@ int main(int argc, char* argv[])
   if(rank == MASTER){
     MPI_Recv(senderbuffer, 512*1024, MPI_FLOAT, 1, tag, MPI_COMM_WORLD, &status);
     for (int i = 0; i < (512*1024); i++) {
-      image[1 + 514 + i] = senderbuffer[i];
+      image[513 + i] = senderbuffer[i];
     }
   }
   else{
     for (int i = 0; i < (512*1024); i++) {
-      senderbuffer[i] = image[2 + start + i];
+      senderbuffer[i] = image[start + i];
     }
     MPI_Send(senderbuffer, 512*1024, MPI_FLOAT, MASTER, tag, MPI_COMM_WORLD);
   }
