@@ -27,7 +27,8 @@ int main(int argc, char* argv[])
   //MPI Startup
   MPI_Init(&argc, &argv);
   //Number processors, which processor ...
-  int nprocs, rank, flag, left, right;
+  int nprocs, rank, flag, left, right, tag = 0,;
+  MPI_Status status;
 
   MPI_Initialized(&flag);
   if ( flag != 1 ){
@@ -131,7 +132,7 @@ int main(int argc, char* argv[])
   double toc = wtime();
   float senderbuffer[(512*1024)];
   if(rank == MASTER){
-    MPI_Recv(senderbuffer, 512*1024, MPI_FLOAT, src, tag, MPI_COMM_WORLD, &status);
+    MPI_Recv(senderbuffer, 512*1024, MPI_FLOAT, 1, tag, MPI_COMM_WORLD, &status);
     for (int i = 0; i < (512*1024); i++) {
       image[1 + 512 + i] = senderbuffer[i];
     }
