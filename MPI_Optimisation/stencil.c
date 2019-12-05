@@ -5,6 +5,7 @@
 
 // Define output file name
 #define OUTPUT_FILE "stencil.pgm"
+#define MASTER 0
 
 void stencil(const int nx, const int ny, const int width, const int height,
              float* image, float* tmp_image);
@@ -38,6 +39,7 @@ int main(int argc, char* argv[])
 
   printf("Hello from rank %d of %d\n", rank, nprocs);
 
+  //Determine rank to the left and right
   left = (rank == 0) ? (rank + nprocs - 1) : (rank - 1);
   right = (rank + 1) % nprocs;
 
@@ -51,8 +53,8 @@ int main(int argc, char* argv[])
   // we pad the outer edge of the image to avoid out of range address issues in
   // stencil
 
-  int width = nx + 2;
-  int height = ny + 2;
+  int width = nx;
+  int height = ny;
 
   // Allocate the image
   float* image = malloc(sizeof(float) * width * height);
@@ -61,13 +63,16 @@ int main(int argc, char* argv[])
   // Set the input image
   init_image(nx, ny, width, height, image, tmp_image);
 
+  //TODO figure out dimensions for the columns
+
   // Call the stencil kernel
   double tic = wtime();
   for (int t = 0; t < niters; ++t) {
-    //halo(image, rank);
+    //TODO figure out halo send and receives
     stencil(nx, ny, width, height, image, tmp_image);
-    //halo(tmp_image, rank);
+    //HALO 1
     stencil(nx, ny, width, height, tmp_image, image);
+    //HALO 2
   }
   double toc = wtime();
 
