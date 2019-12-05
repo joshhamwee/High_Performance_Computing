@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
   }
 
   MPI_Datatype halo;
-  float* haloN = malloc(ny*sizeof(float));
+  float* haloN = malloc(local_ny*sizeof(float));
 
   MPI_Type_vector(local_ny, 1, 1, MPI_FLOAT, &halo);
   MPI_Type_commit(&halo);
@@ -161,7 +161,7 @@ int main(int argc, char* argv[])
 void stencil(const int start, const int nx, const int ny, const int width, const int height,
              float* image, float* tmp_image)
 {
-  for (int j = 1; j < ny + 1; ++j) {
+  for (int j = 1; j < local_ny; ++j) {
     for (int i = start; i < start + 512; ++i) {
       tmp_image[j + i * height] =  image[j     + i       * height] * 0.6f;
       tmp_image[j + i * height] += (image[j     + (i - 1) * height] + image[j     + (i + 1) * height] + image[j - 1 + i       * height] + image[j + 1 + i       * height])* 0.1f;
