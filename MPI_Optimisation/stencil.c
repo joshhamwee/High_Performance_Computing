@@ -14,9 +14,6 @@ void output_image(const char* file_name, const int nx, const int ny,
                   const int width, const int height, float* image);
 double wtime(void);
 
-// void halo(float* image, int rank);
-
-int calc_ncols_from_rank(int rank, int size);
 
 int main(int argc, char* argv[])
 {
@@ -167,17 +164,4 @@ double wtime(void)
   struct timeval tv;
   gettimeofday(&tv, NULL);
   return tv.tv_sec + tv.tv_usec * 1e-6;
-}
-
-int calc_ncols_from_rank(int rank, int size)
-{
-  int ncols;
-
-  ncols = NCOLS / size;       /* integer division */
-  if ((NCOLS % size) != 0) {  /* if there is a remainder */
-    if (rank == size - 1)
-      ncols += NCOLS % size;  /* add remainder to last rank */
-  }
-
-  return ncols;
 }
