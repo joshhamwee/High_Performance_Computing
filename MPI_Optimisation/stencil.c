@@ -190,6 +190,7 @@ int main(int argc, char* argv[])
     output_image(OUTPUT_FILE, nx, ny, width, height, image);
   }
 
+  MPI_Type_free(&halo);
   free(image);
   free(tmp_image);
 
