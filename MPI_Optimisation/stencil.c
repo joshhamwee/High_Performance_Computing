@@ -80,8 +80,22 @@ int main(int argc, char* argv[])
 
   //Make sure all images have been initailised, wait here until they do
   MPI_Barrier(MPI_COMM_WORLD);
+  double tic = wtime();
+  if (nprocs == 1) {
+    for (int t = 0; t < niters; ++t) {
+      stencil(rank, local_nx, local_ny, width, height, image, tmp_image);
+      stencil(rank, local_nx, local_ny, width, height, tmp_image, image);
+    }
+  }
+  else{
 
-  double tic = wtime(); //Begin timing
+  //Order of operations:
+  //Stencil
+  //HALO
+  //Stencil
+  //HALO
+  //Repeat Niters
+   //Begin timing
   for (int t = 0; t < niters; ++t) {
     //Different stencil calls for final column and rest due to sizing
     if (rank == nprocs - 1) {
@@ -175,10 +189,17 @@ int main(int argc, char* argv[])
       }
     }
   }
-  double toc = wtime(); //End timing
+
+  MPI_Barrier(MPI_COMM_WORLD);
+   //End timing
+}
+double toc = wtime();
 
   //Collate all the columns and merge into master
-  data_send_and_gather(rank, local_nx, final_column_nx, height, nprocs, tag, start, status, image);
+  if (nprocs != 1) {
+    data_send_and_gather(rank, local_nx, final_column_nx, height, nprocs, tag, start, status, image);
+  }
+
 
 
   // Output
